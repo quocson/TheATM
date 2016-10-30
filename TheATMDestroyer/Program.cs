@@ -17,7 +17,10 @@ namespace TheATMDestroyer
             var t1 = Task.Run(CreateTask("steve1", "steve", 1000));
             var t2 = Task.Run(CreateTask("steve", "steve1", 2000));
 
-            Task.WaitAll(t1, t2);
+            var t3= Task.Run(CreateTask("steve3", "steve4", 1000));
+            var t4 = Task.Run(CreateTask("steve3", "steve1", 2000));
+
+            Task.WaitAll(t1, t2, t3, t4);
         }
 
 
@@ -25,7 +28,7 @@ namespace TheATMDestroyer
         {
             return new Action(() =>
             {
-                Console.WriteLine("start:" + DateTime.Now + "-" + from + "-" + to + amount);
+                Console.WriteLine("start:" + DateTime.Now + "-" + from + "-" + to + "-" + amount);
                 var request = (HttpWebRequest)WebRequest.Create(String.Format("http://localhost:9112/api/Account?accountFrom={0}&accountTo={1}&amount={2}", from, to, amount));
                 request.Method = "PUT";
                 request.ContentLength = 0;
@@ -33,7 +36,7 @@ namespace TheATMDestroyer
                 {
                     HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                     string returnString = response.StatusCode.ToString();
-                    Console.WriteLine("end:" + DateTime.Now + "-" + from + "-" + to + amount);
+                    Console.WriteLine("end:" + DateTime.Now + "-" + from + "-" + to + "-" + amount);
                     Console.WriteLine(returnString);
                 }
                 catch (WebException ex)
@@ -41,7 +44,7 @@ namespace TheATMDestroyer
                     using (var stream = ex.Response.GetResponseStream())
                     using (var reader = new StreamReader(stream))
                     {
-                        Console.WriteLine("end:" + DateTime.Now + "-" + from + "-" + to + amount);
+                        Console.WriteLine("end:" + DateTime.Now + "-" + from + "-" + to + "-" + amount);
                         Console.WriteLine(reader.ReadToEnd());
                     }
                 }

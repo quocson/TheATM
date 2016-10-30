@@ -47,6 +47,11 @@ namespace TheATM.Service
 
         public void Transfer(string accountNameFrom, string accountNameTo, int amount)
         {
+
+            if (accountNameFrom.Equals(accountNameTo))
+            {
+                throw new Exception("Only transfer to different account.");
+            }
             var accountFrom = this.dbContext.Accounts.FirstOrDefault(a => a.AccountName.Equals(accountNameFrom));
             var accountTo = this.dbContext.Accounts.FirstOrDefault(a => a.AccountName.Equals(accountNameTo));
             if (accountFrom == null)
@@ -66,14 +71,21 @@ namespace TheATM.Service
                 lock2 = lock1;
                 lock1 = temp;
             }
+            bool isL1Acquired = false;
+            bool isL2Acquired = false;
             try
             {
-                Monitor.TryEnter(lock1, TIMEOUT);
+                isL1Acquired = Monitor.TryEnter(lock1, TIMEOUT);
                 Thread.Sleep(TIMEOUT / 2);
-                Monitor.TryEnter(lock2, TIMEOUT);
+                isL2Acquired = Monitor.TryEnter(lock2, TIMEOUT);
+                Thread.Sleep(TIMEOUT / 5);
                 accountFrom.Withdraws(amount);
                 accountTo.Deposits(amount);
                 this.dbContext.SaveChanges();
+            }
+            catch (TimeoutException e)
+            {
+                throw e;
             }
             catch (Exception e)
             {
@@ -81,8 +93,8 @@ namespace TheATM.Service
             }
             finally
             {
-                Monitor.Exit(lock2);
-                Monitor.Exit(lock1);
+                if (isL2Acquired) Monitor.Exit(lock2);
+                if (isL1Acquired) Monitor.Exit(lock1);
             }
         }
 
