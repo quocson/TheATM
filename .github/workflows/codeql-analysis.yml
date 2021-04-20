@@ -61,7 +61,7 @@ jobs:
     
     - name: update ENV
       run: |
-        echo "ACTIONS_ALLOW_UNSECURE_COMMANDS=true" >> $GITHUB_ENV
+        echo "::add-path::C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.0
     - run: |
