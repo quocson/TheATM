@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'csharp', 'javascript' ]
+        language: [ 'csharp' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
@@ -58,9 +58,11 @@ jobs:
     # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
-    - if: matrix.language == 'csharp'
-      run: |
-        msbuild build /p:UseSharedCompilation=false 
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.0
+    - run: |
+        nuget restore
+        msbuild /p:UseSharedCompilation=false 
     #- run: |
     #   make bootstrap
     #   make release
