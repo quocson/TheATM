@@ -60,7 +60,7 @@ jobs:
     #    uses a compiled language
     - if: matrix.language == 'csharp'
       run: |
-        dotnet build /p:UseSharedCompilation=false 
+        msbuild build /p:UseSharedCompilation=false 
     #- run: |
     #   make bootstrap
     #   make release
